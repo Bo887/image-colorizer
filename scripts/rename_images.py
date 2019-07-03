@@ -9,6 +9,7 @@ parser.add_argument("glob", type=str, help="glob to select the images")
 args = parser.parse_args()
 
 data_dir = args.data_dir
+assert (os.path.exists(data_dir))
 if data_dir[-1] != "/":
     data_dir += "/"
 

@@ -13,6 +13,7 @@ args = parser.parse_args()
 num_to_keep = args.num_to_keep
 
 data_dir = args.data_dir
+assert (os.path.exists(data_dir))
 if data_dir[-1] != "/":
     data_dir += "/"
 
