@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 def conv_layer(in_channels, out_channels, kernel_size=3, neg_slope=0.1, stride=2, padding=1):
     return nn.Sequential(
@@ -77,5 +76,5 @@ class Discriminator(nn.Module):
         x = self.conv5(x)
         x = self.conv6(x)
         x = self.conv7(x)
-        x = F.sigmoid(x)
+        x = torch.sigmoid(x)
         return x
