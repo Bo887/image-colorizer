@@ -61,6 +61,7 @@ def train(data_folder, params):
             generator_adversarial_loss = generator_adversarial_criterion(torch.squeeze(fake_predictions), real_labels)
             generator_dist_loss = generator_dist_criterion(fake_images.view(fake_images.size(0), -1), images.view(images.size(0), -1))
             total_generator_loss = generator_adversarial_loss + 100*generator_dist_loss
+            total_generator_loss.backward()
             generator_optimizer.step()
 
             if epoch % params["print_interval"] == 0:
@@ -72,11 +73,11 @@ def train(data_folder, params):
 params = {
     "batch_size" : 128,
     "epochs" : 1000,
-    "learning_rate" : 0.0002,
+    "learning_rate" : 0.009,
     "beta1" : 0.5,
     "print_interval": 10,
-    "gen_save_path": "generator.model",
-    "disc_save_path": "discriminator.model"
+    "gen_save_path": "generator.pth",
+    "disc_save_path": "discriminator.pth"
     }
 
 train("../data/resized_color", params)

@@ -4,6 +4,8 @@ import cv2
 import os
 import numpy as np
 
+from utils import rgb_to_lab
+
 class LABDataset(torch.utils.data.Dataset):
 
     def __init__(self, data_folder):
@@ -15,11 +17,7 @@ class LABDataset(torch.utils.data.Dataset):
 
         for image, _ in dataset:
             image = image.permute(1, 2, 0).numpy()
-            lab_image = cv2.cvtColor(image, cv2.COLOR_RGB2LAB)
-            lab_image[:, :, 0] *= 255/100
-            lab_image[:, :, 1] += 128
-            lab_image[:, :, 2] += 128
-            lab_image /= 255
+            lab_image = rgb_to_lab(image)
             torch_lab_image = torch.from_numpy(np.transpose(lab_image, (2, 0, 1)))
             self.preprocessed_images.append(torch_lab_image)
 
