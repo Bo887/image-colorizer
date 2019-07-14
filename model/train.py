@@ -11,8 +11,9 @@ from data_loader import get_dataloader
 
 from utils import save_model
 
-def train(data_folder, params):
-    data_loader = get_dataloader(data_folder, params["batch_size"])
+def train(train_data_folder, val_data_folder, params):
+    train_data_loader = get_dataloader(train_data_folder, params["batch_size"])
+    val_data_loader = get_dataloader(val_data_folder, params["batch_size"])
 
     # generator takes in a single channel image and outputs a 3-channel image
     generator = Generator(1, 3)
@@ -39,12 +40,15 @@ def train(data_folder, params):
     for epoch in range(params["epochs"]):
 
         # for each batch
-        for i, images in enumerate(data_loader):
-
+        for _, images in enumerate(train_data_loader):
             d_loss, g_loss = single_iteration(images, generator, discriminator, g_optim, d_optim, g_adv_criterion, g_dist_criterion, d_criterion)
 
+        # validation accuracy
+        for _, images in enumerate(val_data_loader):
+            validation_d_loss, validation_g_loss = validate(images, generator, discriminator, g_adv_criterion, g_dist_criterion, d_criterion)
+
         if epoch % params["print_interval"] == 0:
-            print("EPOCH {0}:\tD-Loss: {1:.4f}\tG-Loss: {2:.4f}".format(epoch, d_loss.item(), g_loss.item()))
+            print("EPOCH {0}:\tTrain-D-Loss: {1:.4f}\tTrain-G-Loss: {2:.4f}\n\tValid-G-Loss: {3:.4f}\tValid-G-Loss: {4:.4f}".format(epoch, d_loss.item(), g_loss.item(), validation_d_loss.item(), validation_g_loss.item()))
 
         if "save_interval" in params and epoch % params["save_interval"] == 0:
             filename = save_path + "model_epoch_{}.pth".format(epoch)
@@ -87,6 +91,32 @@ def single_iteration(images, generator, discriminator, g_optim, d_optim, g_adv_c
     g_optim.step()
     return total_d_loss, total_g_loss
 
+def validate(images, generator, discriminator, g_adv_criterion, g_dist_criterion, d_criterion):
+    grayscale_images = images[:, 0:1, :, :]
+    grayscale_images, images = Variable(grayscale_images.cuda()), Variable(images.cuda())
+
+    real_predictions = discriminator(images)
+    real_labels = torch.FloatTensor(images.size(0)).fill_(1)
+    real_labels = Variable(real_labels.cuda())
+
+    d_real_loss = d_criterion(torch.squeeze(real_predictions), real_labels)
+
+    fake_images = generator(grayscale_images)
+    fake_predictions = discriminator(fake_images.detach())
+    fake_labels = torch.FloatTensor(fake_images.size(0)).fill_(1)
+    fake_labels = Variable(fake_labels.cuda())
+    d_fake_loss = d_criterion(torch.squeeze(fake_predictions), fake_labels)
+
+    fake_predictions = discriminator(fake_images)
+
+    total_d_loss = d_real_loss + d_fake_loss
+
+    g_adversarial_loss = g_adv_criterion(torch.squeeze(fake_predictions), real_labels)
+    g_dist_loss = g_dist_criterion(fake_images.view(fake_images.size(0), -1), images.view(images.size(0), -1))
+    total_g_loss = g_adversarial_loss + 100*g_dist_loss
+
+    return total_d_loss, total_g_loss
+ 
 params = {
     "batch_size" : 128,
     "epochs" : 1000,
@@ -97,4 +127,4 @@ params = {
     "save_path": "models/"
     }
 
-train("../data/resized_color", params)
+train("../data/train", "../data/valid", params)
