@@ -48,7 +48,7 @@ def train(train_data_folder, val_data_folder, params):
             validation_d_loss, validation_g_loss = validate(images, generator, discriminator, g_adv_criterion, g_dist_criterion, d_criterion)
 
         if epoch % params["print_interval"] == 0:
-            print("EPOCH {0}:\tTrain-D-Loss: {1:.4f}\tTrain-G-Loss: {2:.4f}\n\tValid-G-Loss: {3:.4f}\tValid-G-Loss: {4:.4f}".format(epoch, d_loss.item(), g_loss.item(), validation_d_loss.item(), validation_g_loss.item()))
+            print("EPOCH {0}:\tTrain-D-Loss: {1:.4f}\tTrain-G-Loss: {2:.4f}\n\tValid-G-Loss: {3:.4f}\tValid-G-Loss: {4:.4f}".format(epoch, d_loss, g_loss, validation_d_loss, validation_g_loss))
 
         if "save_interval" in params and epoch % params["save_interval"] == 0:
             filename = save_path + "model_epoch_{}.pth".format(epoch)
@@ -89,7 +89,7 @@ def single_iteration(images, generator, discriminator, g_optim, d_optim, g_adv_c
     total_g_loss = g_adversarial_loss + 100*g_dist_loss
     total_g_loss.backward()
     g_optim.step()
-    return total_d_loss, total_g_loss
+    return total_d_loss.item(), total_g_loss.item()
 
 def validate(images, generator, discriminator, g_adv_criterion, g_dist_criterion, d_criterion):
     grayscale_images = images[:, 0:1, :, :]
@@ -115,4 +115,4 @@ def validate(images, generator, discriminator, g_adv_criterion, g_dist_criterion
     g_dist_loss = g_dist_criterion(fake_images.view(fake_images.size(0), -1), images.view(images.size(0), -1))
     total_g_loss = g_adversarial_loss + 100*g_dist_loss
 
-    return total_d_loss, total_g_loss
+    return total_d_loss.item(), total_g_loss.item()
