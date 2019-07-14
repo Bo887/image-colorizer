@@ -9,7 +9,7 @@ def infer(data_folder, params):
     data_loader = get_dataloader(data_folder, params["batch_size"])
 
     generator = Generator(1, 3)
-    generator.load_state_dict(torch.load(params["gen_save_path"]))
+    generator.load_state_dict(torch.load(params["save_path"])["generator_state"])
     generator.eval()
 
     for i, images in enumerate(data_loader):
@@ -24,11 +24,7 @@ def infer(data_folder, params):
 
 params = {
     "batch_size" : 128,
-    "epochs" : 100,
-    "learning_rate" : 0.0002,
-    "beta1" : 0.5,
-    "print_interval": 10,
-    "gen_save_path": "generator.pth",
+    "save_path": "models/model_final.pth"
     }
 
 infer("../data/resized_color", params)
