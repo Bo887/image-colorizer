@@ -21,10 +21,3 @@ def infer(data_folder, params):
             cv2.imshow("orig_image", orig_image) 
             cv2.imshow("color", predicted_img)
             cv2.waitKey(30)
-
-params = {
-    "batch_size" : 128,
-    "save_path": "models/model_final.pth"
-    }
-
-infer("../data/resized_color", params)

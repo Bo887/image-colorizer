@@ -5,11 +5,11 @@ from torch.autograd import Variable
 
 import os
 
-from dcgan_model import Generator
-from dcgan_model import Discriminator
-from data_loader import get_dataloader
+from .dcgan_model import Generator
+from .dcgan_model import Discriminator
+from .data_loader import get_dataloader
 
-from utils import save_model
+from .utils import save_model
 
 def train(train_data_folder, val_data_folder, params):
     train_data_loader = get_dataloader(train_data_folder, params["batch_size"])
@@ -116,15 +116,3 @@ def validate(images, generator, discriminator, g_adv_criterion, g_dist_criterion
     total_g_loss = g_adversarial_loss + 100*g_dist_loss
 
     return total_d_loss, total_g_loss
- 
-params = {
-    "batch_size" : 128,
-    "epochs" : 1000,
-    "learning_rate" : 0.009,
-    "beta1" : 0.5,
-    "print_interval": 10,
-    "save_interval": 100,
-    "save_path": "models/"
-    }
-
-train("../data/train", "../data/valid", params)

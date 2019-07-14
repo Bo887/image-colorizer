@@ -4,7 +4,7 @@ import cv2
 import os
 import numpy as np
 
-from utils import rgb_to_lab
+from .utils import rgb_to_lab
 
 class LABDataset(torch.utils.data.Dataset):
 
