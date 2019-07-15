@@ -3,7 +3,8 @@ from nn import train
 params = {
     "batch_size" : 5,
     "epochs" : 1000,
-    "learning_rate" : 0.0005,
+    #"learning_rate" : 0.0005,
+    "learning_rate" : 0.009,
     "beta1" : 0.5,
     "print_interval": 10,
     "save_interval": 100,

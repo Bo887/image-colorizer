@@ -1,1 +1,2 @@
-from .train import train
+from .training import train
+from .inference import infer
