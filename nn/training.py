@@ -88,7 +88,7 @@ def single_iteration(images, generator, discriminator, g_optim, d_optim, g_adv_c
     # train the discriminator on fake color images that are generated from the grayscale images
     fake_images = generator(grayscale_images)
     fake_predictions = discriminator(fake_images.detach())
-    fake_labels = torch.FloatTensor(fake_images.size(0)).fill_(1)
+    fake_labels = torch.FloatTensor(fake_images.size(0)).fill_(0)
     fake_labels = Variable(fake_labels.cuda())
     d_fake_loss = d_criterion(torch.squeeze(fake_predictions), fake_labels)
     d_fake_loss.backward()
