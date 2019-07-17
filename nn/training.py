@@ -63,7 +63,7 @@ def train(train_data_folder, val_data_folder, params):
         total_valid_g_loss /= num_valid_batches
 
         if epoch % params["print_interval"] == 0:
-            print("EPOCH {0}:\tTrain-D-Loss: {1:.4f}\tTrain-G-Loss: {2:.4f}\n\tValid-G-Loss: {3:.4f}\tValid-G-Loss: {4:.4f}".format(epoch, total_training_d_loss, total_training_g_loss, total_valid_d_loss, total_valid_g_loss))
+            print("EPOCH {0}:\tTrain-D-Loss: {1:.4f}\tTrain-G-Loss: {2:.4f}\n\tValid-D-Loss: {3:.4f}\tValid-G-Loss: {4:.4f}".format(epoch, total_training_d_loss, total_training_g_loss, total_valid_d_loss, total_valid_g_loss))
 
         if "save_interval" in params and epoch % params["save_interval"] == 0:
             filename = save_path + "model_epoch_{}.pth".format(epoch)
